@@ -40,14 +40,15 @@ var ui = function ($, Formatter) {
             $num.css({ '-webkit-transform': 'translate3d(' + xPos + 'px, 0px, 0px)' });
             $mobilecard[method]('entering-number');
         };
-        var showNum = function () {
+        var showNum = function (field) {
             updateDisplay(0, 'addClass');
             $num.off('touchend');
         };
-        var hideNum = function () {
+        var hideNum = function (field) {
             updateDisplay(_getAnimDist(), 'removeClass');
             $num.on('touchend', function (evt) {
-                focus($num[0]);
+                showNum(field);
+                focus(field);
             });
         };
         var _getAnimDist = function () {
@@ -252,11 +253,12 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
             newField.lastSel = dir > 0 ? 0 : newField.el.value.length;
             ui.focus(newField);
             if (typeof next == 'function') {
-                next();
+                next(field);
             }
         };
         var keyUp = function (evt, type) {
             var field = fields[type], sel = evt.target.selectionEnd, k = evt.which || evt.keyCode;
+            field.lastSel = field.el.value.length;
             if (field.before) {
                 field.before(field.el.value);
             }
@@ -273,7 +275,6 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
                     return focus(field, 1, field.next);
                 }
             }
-            field.lastSel = field.el.value.length;
             validateFields();
         };
         var fields = {
@@ -300,15 +301,19 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
                 name: 'card_number',
                 validateOnInput: true,
                 before: setCard,
-                next: function () {
-                    setTimeout(ui.hideNum, 60);
+                next: function (field) {
+                    setTimeout(function () {
+                        ui.hideNum(field);
+                    }, 60);
                 },
                 test: validate.card
             });
             fields.add('exp', {
                 name: 'exp_date',
                 validateOnInput: true,
-                prev: ui.showNum,
+                prev: function (field) {
+                    ui.showNum(field);
+                },
                 next: null,
                 test: function (val) {
                     var info = utils.getExpParts(val);

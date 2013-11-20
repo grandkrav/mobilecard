@@ -86,7 +86,7 @@ var updateDisplay = function (xPos, method) {
 //
 // Display num field
 //
-var showNum = function () {
+var showNum = function (field) {
   updateDisplay(0, 'addClass');
   $num.off('touchend');
 };
@@ -94,10 +94,11 @@ var showNum = function () {
 //
 // Hide num field
 //
-var hideNum = function () {
+var hideNum = function (field) {
   updateDisplay(_getAnimDist(), 'removeClass');
   $num.on('touchend', function (evt) {
-    focus($num[0]);
+    showNum(field);
+    focus(field);
   });
 };
 

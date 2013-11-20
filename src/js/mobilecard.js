@@ -29,7 +29,7 @@ var focus = function (field, dir, next) {
   // Focus
   ui.focus(newField);
   // Calback if exists
-  if (typeof next == 'function') { next(); }
+  if (typeof next == 'function') { next(field); }
 };
 
 //
@@ -41,6 +41,9 @@ var keyUp = function (evt, type) {
       sel   = evt.target.selectionEnd,
       k     = evt.which || evt.keyCode;
 
+  // lastSel should be equal to the last char entered
+  field.lastSel = field.el.value.length;
+  
   // before
   if (field.before) {
     field.before(field.el.value);
@@ -61,9 +64,6 @@ var keyUp = function (evt, type) {
       return focus(field, 1, field.next);
     }
   }
-
-  // lastSel should be equal to the last char entered
-  field.lastSel = field.el.value.length;
 
   // Validate all fields
   validateFields();
@@ -119,9 +119,11 @@ var addFields = function () {
     name: 'card_number',
     validateOnInput: true,
     before: setCard,
-    next: function () {
+    next: function (field) {
       // Delay to fix transition lag
-      setTimeout(ui.hideNum, 60);
+      setTimeout(function () {
+        ui.hideNum(field);
+      }, 60);
     },
     test: validate.card
   });
@@ -130,7 +132,9 @@ var addFields = function () {
   fields.add('exp', {
     name: 'exp_date',
     validateOnInput: true,
-    prev: ui.showNum,
+    prev: function (field) {
+      ui.showNum(field);
+    },
     next: null,
     test: function (val) {
       var info = utils.getExpParts(val);
