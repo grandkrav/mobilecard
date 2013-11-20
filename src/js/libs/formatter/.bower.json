@@ -1,0 +1,14 @@
+{
+  "name": "formatter",
+  "homepage": "https://github.com/firstopinion/formatter.js",
+  "version": "0.0.9",
+  "_release": "0.0.9",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.9",
+    "commit": "72ea52ff4c3f5266316f9d5e3f46b2fa2ed0285d"
+  },
+  "_source": "git://github.com/firstopinion/formatter.js.git",
+  "_target": "0.0.9",
+  "_originalSource": "formatter"
+}

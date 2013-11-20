@@ -1,0 +1,10 @@
+{
+  "name": "mobilecard",
+  "version": "0.0.1",
+  "dependencies": {
+    "formatter": "0.0.9",
+    "requirejs": "2.1.9",
+    "almond": "0.2.7",
+    "jquery": "2.0.3"
+  }
+}

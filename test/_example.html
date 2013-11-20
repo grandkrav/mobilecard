@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- meta -->
+        <meta charset="utf-8" />
+        <title>Mobile Card Tests</title>
+
+        <!-- styles -->
+        <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+        <link rel="stylesheet" href="../dist/css/styles.css" />
+        <link rel="stylesheet" href="../dist/css/theme.css" />
+        <style>
+        #payments {
+          padding: 20px;
+          background: #eee;
+        }
+        </style>
+    </head>
+
+    <body>
+
+        <div id="test-content">
+          <form id="payments">
+
+            <ul class="mobilecard formatting entering-number">
+              <li class="input-number">
+                <input type="text" name="card_number" placeholder="1234 5678 9012 3456" pattern="\d*">
+              </li>
+              <li class="input-exp">
+                <input type="text" name="exp_date" placeholder="MM/YY" pattern="\d*" maxLength="5">
+              </li>
+              <li class="input-cvc">
+                <input type="text" name="cvc" placeholder="CVC" pattern="\d*">
+              </li>
+              <li class="input-zip">
+                <input type="text" name="zip" placeholder="ZIP" pattern="\d*" maxLength="5">
+              </li>
+            </ul>
+            
+          </form>
+        </div>
+
+        <div id="mocha"></div>
+
+        <!-- tests -->
+        <script src="../dist/js/libs/requirejs/require.js"></script>
+        <script>
+            require.config({
+              urlArgs: "bust=" + (new Date()).getTime(),
+              baseUrl: '../dist/js',
+              paths: {
+                'formatter' : 'libs/formatter/lib/formatter',
+                'jquery'    : 'libs/jquery/jquery'
+              }
+            });
+
+            require(['mobilecard'], function(mobilecard) {
+              mobilecard.init(document.getElementById('payments'), function (err) {
+                console.log(err);
+              });
+            });
+        </script>
+    </body>
+</html>

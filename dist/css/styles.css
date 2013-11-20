@@ -1,0 +1,92 @@
+/*!
+* styles.css
+* Description: mobilecard styling
+* Version: 1.0
+*/
+ 
+/*** TABLE OF CONTENTS ***
+*
+* 1. mobilecard
+*/
+
+
+/* 1. mobilecard
+----------------------------------------------------------------------------------------------------*/
+
+/* BASE */
+.mobilecard {
+	position: relative;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.mobilecard input {
+	display: block;
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
+	background: none;
+}
+.mobilecard.formatting > li {
+	position: absolute;
+	top: 0px;
+	overflow: hidden;
+}
+
+/* DEFAULT POSITIONS */
+.mobilecard.formatting > li.input-number {
+	left: 12px;
+}
+.mobilecard.formatting > li.input-number > input {
+	width: 12em;
+}
+.mobilecard.formatting > li.input-exp {
+	right: 7.6em;
+}
+.mobilecard.formatting > li.input-exp > input {
+	width: 4.2em;
+}
+.mobilecard.formatting > li.input-cvc {
+	right: 4.1em;
+}
+.mobilecard.formatting > li.input-cvc > input {
+	width: 3.15em;
+}
+.mobilecard.formatting > li.input-zip {
+	right: 0;
+}
+.mobilecard.formatting > li.input-zip > input {
+	width: 3.85em;
+}
+
+/* ANIMATION SHOW FIELDS */
+.mobilecard.formatting > li.input-number > input {
+	transition: -webkit-transform 0.3s ease 0.15s;
+}
+.mobilecard.formatting > li.input-exp,
+.mobilecard.formatting > li.input-cvc,
+.mobilecard.formatting > li.input-zip {
+	transition: opacity 0.3s ease;
+}
+
+/* ANIMATION HIDE FIELDS */
+.mobilecard.formatting.entering-number > li.input-number > input {
+	transition: none;
+}
+.mobilecard.formatting.entering-number > li.input-exp,
+.mobilecard.formatting.entering-number > li.input-cvc,
+.mobilecard.formatting.entering-number > li.input-zip {
+	transition: none;
+}
+
+/* ENTERING NUMBER */
+.mobilecard.formatting.entering-number > li.input-number > input {
+	-webkit-transform: translate3d(0, 0, 0);
+}
+.mobilecard.formatting.entering-number > li.input-exp,
+.mobilecard.formatting.entering-number > li.input-cvc,
+.mobilecard.formatting.entering-number > li.input-zip {
+	height: 0;
+	opacity: 0;
+}

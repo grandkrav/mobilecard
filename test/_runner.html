@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- meta -->
+        <meta charset="utf-8" />
+        <title>Mobile Card Tests</title>
+
+        <!-- styles -->
+        <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+        <link rel="stylesheet" href="../src/css/styles.css" />
+        <link rel="stylesheet" href="../src/css/theme.css" />
+        <style>
+        #payments {
+          padding: 20px;
+          background: #eee;
+        }
+        </style>
+    </head>
+
+    <body>
+
+        <div id="test-content">
+          <form id="payments">
+            <ul class="mobilecard formatting entering-number">
+              <li class="input-number">
+                <input type="text" name="card_number" placeholder="1234 5678 9012 3456" pattern="\d*">
+              </li>
+              <li class="input-exp">
+                <input type="text" name="exp_date" placeholder="MM/YY" pattern="\d*">
+              </li>
+              <li class="input-cvc">
+                <input type="text" name="cvc" placeholder="CVC" pattern="\d*">
+              </li>
+              <li class="input-zip">
+                <input type="text" name="zip" placeholder="ZIP" pattern="\d*" maxLength="5">
+              </li>
+            </ul>
+          </form>
+        </div>
+
+        <div id="mocha"></div>
+
+        <!-- tests -->
+        <script src="../src/js/libs/requirejs/require.js"></script>
+        <script>
+            var curURL  = window.location.href.toString(),
+                curDir  = curURL.slice(0, curURL.lastIndexOf('/')),
+                rootDir = curDir.slice(0, curDir.lastIndexOf('/'));
+
+            require.config({
+              urlArgs: "bust=" + (new Date()).getTime(),
+              baseUrl: '../src/js',
+              paths: {
+                'formatter' : 'libs/formatter/lib/formatter',
+                'jquery'    : 'libs/jquery/jquery',
+                'mocha'     : rootDir + '/node_modules/mocha/mocha',
+                'chai'      : rootDir + '/node_modules/chai/chai'
+              }
+            });
+
+            require(['require', 'mocha'], function(require) {
+              // mocha setup
+              mocha.setup('bdd');
+              mocha.reporter('html');
+
+              require([
+                './cards.js',
+                './ui.js',
+                './utils.js',
+                './validate.js'
+              ], function(require) {
+                if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+                else { mocha.run(); }
+              });
+            });
+        </script>
+    </body>
+</html>
