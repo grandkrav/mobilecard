@@ -346,9 +346,20 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
             evtCallback(null);
         };
         var setCard = function (val) {
-            card = cards.matchPattern(val);
-            ui.updateNum(fields['num'], card);
-            ui.updateCvc(fields['cvc'], card);
+            var newCard = cards.matchPattern(val);
+            if (newCard !== card) {
+                card = newCard;
+                ui.updateNum(fields['num'], card);
+                ui.updateCvc(fields['cvc'], card);
+            }
+        };
+        var data = function () {
+            return {
+                num: fields['num'].el.value,
+                exp: utils.getExpParts(fields['exp_date'].el.value),
+                cvc: fields['cvc'].el.value,
+                zip: fields['zip'].el.value
+            };
         };
         var init = function (formEl, next) {
             form = formEl;
@@ -358,7 +369,10 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
             ui.addExpFormatter(fields['exp']);
             setCard('');
         };
-        return { init: init };
+        return {
+            init: init,
+            data: data
+        };
     }(ui, cards, field, validate, utils);
 return mobilecard;
 

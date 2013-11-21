@@ -180,9 +180,24 @@ var validateFields = function () {
 // Set card obj and update display
 //
 var setCard = function (val) {
-  card = cards.matchPattern(val);
-  ui.updateNum(fields['num'], card);
-  ui.updateCvc(fields['cvc'], card);
+  var newCard = cards.matchPattern(val);
+  if (newCard !== card) {
+    card = newCard;
+    ui.updateNum(fields['num'], card);
+    ui.updateCvc(fields['cvc'], card);
+  }
+};
+
+//
+// Grab current and formatted form data
+//
+var data = function () {
+  return {
+    num: fields['num'].el.value,
+    exp: utils.getExpParts(fields['exp_date'].el.value),
+    cvc: fields['cvc'].el.value,
+    zip: fields['zip'].el.value
+  };
 };
 
 //
@@ -202,7 +217,8 @@ var init = function (formEl, next) {
 
 // Expose
 return {
-  init: init
+  init: init,
+  data: data
 };
 
   
