@@ -29,16 +29,16 @@
 
             <ul class="mobilecard formatting entering-number">
               <li class="input-number">
-                <input type="text" name="card_number" placeholder="1234 5678 9012 3456" pattern="\d*">
+                <input type="text" name="card_number" placeholder="1234 5678 9012 3456" pattern="\d*" tabindex="1">
               </li>
               <li class="input-exp">
-                <input type="text" name="exp_date" placeholder="MM/YY" pattern="\d*" maxLength="5">
+                <input type="text" name="exp_date" placeholder="MM/YY" pattern="\d*" maxLength="5" tabindex="2">
               </li>
               <li class="input-cvc">
-                <input type="text" name="cvc" placeholder="CVC" pattern="\d*">
+                <input type="text" name="cvc" placeholder="CVC" pattern="\d*"  tabindex="3">
               </li>
               <li class="input-zip">
-                <input type="text" name="zip" placeholder="ZIP" pattern="\d*" maxLength="5">
+                <input type="text" name="zip" placeholder="ZIP" pattern="\d*" maxLength="5"  tabindex="4">
               </li>
             </ul>
             
@@ -64,7 +64,7 @@
             require(['mobilecard'], function(mobilecard) {
               card = mobilecard;
               mobilecard.init(document.getElementById('payments'), function (err) {
-                console.log(err);
+                // console.log(err);
               });
             });
         </script>

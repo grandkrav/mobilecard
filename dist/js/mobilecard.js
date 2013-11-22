@@ -15,12 +15,19 @@ var ui = function ($, Formatter) {
         var addKeyUpListener = function (field, handler) {
             $(field.el).on('keyup', handler);
         };
+        var addFocusListener = function (field, handler) {
+            $(field.el).on('focus', handler);
+        };
         var focus = function (field) {
             field.el.setSelectionRange(field.lastSel, field.lastSel);
             field.el.focus();
         };
         var displayFieldStatus = function (field, isValid) {
             $(field.el).css({ color: isValid ? '' : 'rgb(255, 0, 0)' });
+        };
+        var setReadOnly = function (field, isValid) {
+            console.log(isValid);
+            return isValid ? field.el.removeAttribute('readonly') : field.el.setAttribute('readonly');
         };
         var addExpFormatter = function (field) {
             field.formatter = new Formatter(field.el, { pattern: '{{99}}/{{99}}' });
@@ -69,8 +76,10 @@ var ui = function ($, Formatter) {
         };
         return {
             displayFieldStatus: displayFieldStatus,
+            addFocusListener: addFocusListener,
             addKeyUpListener: addKeyUpListener,
             addExpFormatter: addExpFormatter,
+            setReadOnly: setReadOnly,
             getMaxLength: getMaxLength,
             updateDisplay: updateDisplay,
             updateNum: updateNum,
@@ -248,7 +257,13 @@ var validate = function () {
     }();
 var mobilecard = function (ui, cards, Field, validate, utils) {
         var form, evtCallback, card;
-        var focus = function (field, dir, next) {
+        var focus = function (evt, type) {
+            var field = fields[type];
+            if (field.focus) {
+                field.focus(field);
+            }
+        };
+        var setFocus = function (field, dir, next) {
             var newField = fields.get(field, dir);
             newField.lastSel = dir > 0 ? 0 : newField.el.value.length;
             ui.focus(newField);
@@ -266,12 +281,12 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
             }
             if (field.prev || field.prev === null) {
                 if (sel === 0 && field.lastSel === 0 && k == 8) {
-                    return focus(field, -1, field.prev);
+                    return setFocus(field, -1, field.prev);
                 }
             }
             if (field.next || field.next === null) {
                 if (sel == ui.getMaxLength(field) && field.validateField()) {
-                    return focus(field, 1, field.next);
+                    return setFocus(field, 1, field.next);
                 }
             }
             field.lastSel = field.el.value.length;
@@ -294,6 +309,9 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
                     ui.addKeyUpListener(this[id], function (evt) {
                         keyUp(evt, id);
                     });
+                    ui.addFocusListener(this[id], function (evt) {
+                        focus(evt, id);
+                    });
                 },
                 get: function (field, dir) {
                     return this[this.order[field.index + dir]];
@@ -305,18 +323,16 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
                 validateOnInput: true,
                 before: function (field) {
                     setCard(field.el.value);
+                    var full = ui.getMaxLength(field) == field.el.value.length;
+                    setReadOnly(field.validate() && full);
                 },
                 next: function (field) {
                     setTimeout(function () {
                         ui.hideNum(field);
                     }, 60);
                 },
-                after: function (field) {
-                    if (field.lastSel === 0) {
-                        field.validation.onKey = false;
-                        ui.displayFieldStatus(field, true);
-                    }
-                },
+                after: resetField,
+                focus: ui.showNum,
                 test: validate.card
             });
             fields.add('exp', {
@@ -326,6 +342,12 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
                     ui.showNum(field);
                 },
                 next: null,
+                focus: function (field) {
+                    setTimeout(function () {
+                        ui.hideNum(field);
+                    }, 60);
+                },
+                after: resetField,
                 test: function (val) {
                     var info = utils.getExpParts(val);
                     return validate.exp(info);
@@ -347,6 +369,12 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
                 }
             });
         };
+        var resetField = function (field) {
+            if (field.lastSel === 0) {
+                field.validation.onKey = false;
+                ui.displayFieldStatus(field, true);
+            }
+        };
         var validateFields = function () {
             var error = false;
             for (var key in fields) {
@@ -356,20 +384,27 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
             }
             evtCallback(null);
         };
+        var setReadOnly = function (isValid) {
+            for (var key in fields) {
+                if (fields[key] instanceof Field && key !== 'num') {
+                    ui.setReadOnly(fields[key], isValid);
+                }
+            }
+        };
         var setCard = function (val) {
             var newCard = cards.matchPattern(val);
             if (newCard !== card) {
                 card = newCard;
-                ui.updateNum(fields['num'], card);
-                ui.updateCvc(fields['cvc'], card);
+                ui.updateNum(fields.num, card);
+                ui.updateCvc(fields.cvc, card);
             }
         };
         var data = function () {
             return {
-                num: fields['num'].el.value,
+                num: fields.num.el.value,
                 exp: utils.getExpParts(fields['exp'].el.value),
-                cvc: fields['cvc'].el.value,
-                zip: fields['zip'].el.value
+                cvc: fields.cvc.el.value,
+                zip: fields.zip.el.value
             };
         };
         var init = function (formEl, next) {
@@ -379,6 +414,7 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
             addFields();
             ui.addExpFormatter(fields['exp']);
             setCard('');
+            setReadOnly(false);
         };
         return {
             init: init,

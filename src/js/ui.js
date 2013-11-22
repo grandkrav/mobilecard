@@ -22,10 +22,17 @@ var getMaxLength = function (field) {
 };
 
 //
-// Add keyup listener to each field
+// Add keyup listener to field
 //
 var addKeyUpListener = function (field, handler) {
   $(field.el).on('keyup', handler);
+};
+
+//
+// Add focus listener to field
+//
+var addFocusListener = function (field, handler) {
+  $(field.el).on('focus', handler);
 };
 
 //
@@ -41,6 +48,16 @@ var focus = function (field) {
 //
 var displayFieldStatus = function (field, isValid) {
   $(field.el).css({ color: isValid ? '' : 'rgb(255, 0, 0)' });
+};
+
+//
+// Increment all tab indexes for round robin experience
+//
+var setReadOnly = function (field, isValid) {
+  console.log(isValid);
+  return isValid
+    ? field.el.removeAttribute('readonly')
+    : field.el.setAttribute('readonly');
 };
 
 //
@@ -151,8 +168,10 @@ var init = function () {
 // Expose
 return {
   displayFieldStatus: displayFieldStatus,
+  addFocusListener: addFocusListener,
   addKeyUpListener: addKeyUpListener,
   addExpFormatter: addExpFormatter,
+  setReadOnly: setReadOnly,
   getMaxLength: getMaxLength,
   updateDisplay: updateDisplay,
   updateNum: updateNum,

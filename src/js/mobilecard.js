@@ -18,9 +18,18 @@ define([
 var form, evtCallback, card;
 
 //
+// Focus 
+//
+var focus = function (evt, type) {
+  var field = fields[type];
+  // Field specific focus
+  if (field.focus) { field.focus(field); }
+};
+
+//
 // Set the focus and caret position on a new input
 //
-var focus = function (field, dir, next) {
+var setFocus = function (field, dir, next) {
   // Setup new field
   var newField = fields.get(field, dir);
   // Set lastSel
@@ -28,6 +37,7 @@ var focus = function (field, dir, next) {
 
   // Focus
   ui.focus(newField);
+
   // Calback if exists
   if (typeof next == 'function') { next(field); }
 };
@@ -42,9 +52,8 @@ var keyUp = function (evt, type) {
       k     = evt.which || evt.keyCode;
   
   // before
-  if (field.before) {
-    field.before(field);
-  }
+  if (field.before) { field.before(field); }
+
   // onKey validation
   if (field.validateOnInput && field.validation.onKey) {
     field.validateField();
@@ -52,22 +61,21 @@ var keyUp = function (evt, type) {
   // prev
   if (field.prev || field.prev === null) {
     if (sel === 0 && field.lastSel === 0 && k == 8) {
-      return focus(field, -1, field.prev);
+      return setFocus(field, -1, field.prev);
     }
   }
   // next
   if (field.next || field.next === null) {
     if (sel == ui.getMaxLength(field) && field.validateField()) {
-      return focus(field, 1, field.next);
+      return setFocus(field, 1, field.next);
     }
   }
 
   // lastSel should be equal to the last char entered
   field.lastSel = field.el.value.length;
 
-  if (field.after) {
-    field.after(field);
-  }
+  // after
+  if (field.after) { field.after(field); }
 
   // Validate all fields
   validateFields();
@@ -103,6 +111,11 @@ var fields = {
     ui.addKeyUpListener(this[id], function (evt) {
       keyUp(evt, id);
     });
+
+    // Add focus listener
+    ui.addFocusListener(this[id], function (evt) {
+      focus(evt, id);
+    });
   },
 
   //
@@ -124,6 +137,9 @@ var addFields = function () {
     validateOnInput: true,
     before: function (field) {
       setCard(field.el.value);
+      // Make sure we have a full number
+      var full = ui.getMaxLength(field) == field.el.value.length;
+      setReadOnly(field.validate() && full);
     },
     next: function (field) {
       // Delay to fix transition lag
@@ -131,12 +147,8 @@ var addFields = function () {
         ui.hideNum(field);
       }, 60);
     },
-    after: function (field) {
-      if (field.lastSel === 0) {
-        field.validation.onKey = false;
-        ui.displayFieldStatus(field, true);
-      }
-    },
+    after: resetField,
+    focus: ui.showNum,
     test: validate.card
   });
 
@@ -148,6 +160,12 @@ var addFields = function () {
       ui.showNum(field);
     },
     next: null,
+    focus: function (field) {
+      setTimeout(function () {
+        ui.hideNum(field);
+      }, 60);
+    },
+    after: resetField,
     test: function (val) {
       var info = utils.getExpParts(val);
       return validate.exp(info);
@@ -175,10 +193,20 @@ var addFields = function () {
 };
 
 //
+//
+// Stop validation of field
+//
+var resetField = function (field) {
+  if (field.lastSel === 0) {
+    field.validation.onKey = false;
+    ui.displayFieldStatus(field, true);
+  }
+};
+
+//
 // Validate all fields.
 //
 var validateFields = function () {
-  // Validate all
   var error = false;
   for (var key in fields) {
     if (fields[key] instanceof Field && !fields[key].validate()) {
@@ -189,14 +217,24 @@ var validateFields = function () {
 };
 
 //
+// Loop over fields and set readonly attribute based on validation
+//
+var setReadOnly = function (isValid) {
+  for (var key in fields) {
+    if (fields[key] instanceof Field && key !== 'num') {
+      ui.setReadOnly(fields[key], isValid);
+    }
+  }
+};
+//
 // Set card obj and update display
 //
 var setCard = function (val) {
   var newCard = cards.matchPattern(val);
   if (newCard !== card) {
     card = newCard;
-    ui.updateNum(fields['num'], card);
-    ui.updateCvc(fields['cvc'], card);
+    ui.updateNum(fields.num, card);
+    ui.updateCvc(fields.cvc, card);
   }
 };
 
@@ -205,10 +243,10 @@ var setCard = function (val) {
 //
 var data = function () {
   return {
-    num: fields['num'].el.value,
+    num: fields.num.el.value,
     exp: utils.getExpParts(fields['exp'].el.value),
-    cvc: fields['cvc'].el.value,
-    zip: fields['zip'].el.value
+    cvc: fields.cvc.el.value,
+    zip: fields.zip.el.value
   };
 };
 
@@ -222,9 +260,13 @@ var init = function (formEl, next) {
 
   // Init ui
   ui.init();
+  // Init fields
   addFields();
+  // Format exp
   ui.addExpFormatter(fields['exp']);
+  // Init card is default
   setCard('');
+  setReadOnly(false);
 };
 
 // Expose
