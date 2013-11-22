@@ -40,9 +40,6 @@ var keyUp = function (evt, type) {
   var field = fields[type],
       sel   = evt.target.selectionEnd,
       k     = evt.which || evt.keyCode;
-
-  // lastSel should be equal to the last char entered
-  field.lastSel = field.el.value.length;
   
   // before
   if (field.before) {
@@ -64,6 +61,9 @@ var keyUp = function (evt, type) {
       return focus(field, 1, field.next);
     }
   }
+
+  // lastSel should be equal to the last char entered
+  field.lastSel = field.el.value.length;
 
   // Validate all fields
   validateFields();
@@ -194,7 +194,7 @@ var setCard = function (val) {
 var data = function () {
   return {
     num: fields['num'].el.value,
-    exp: utils.getExpParts(fields['exp_date'].el.value),
+    exp: utils.getExpParts(fields['exp'].el.value),
     cvc: fields['cvc'].el.value,
     zip: fields['zip'].el.value
   };

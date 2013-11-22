@@ -258,7 +258,6 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
         };
         var keyUp = function (evt, type) {
             var field = fields[type], sel = evt.target.selectionEnd, k = evt.which || evt.keyCode;
-            field.lastSel = field.el.value.length;
             if (field.before) {
                 field.before(field.el.value);
             }
@@ -275,6 +274,7 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
                     return focus(field, 1, field.next);
                 }
             }
+            field.lastSel = field.el.value.length;
             validateFields();
         };
         var fields = {
@@ -356,7 +356,7 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
         var data = function () {
             return {
                 num: fields['num'].el.value,
-                exp: utils.getExpParts(fields['exp_date'].el.value),
+                exp: utils.getExpParts(fields['exp'].el.value),
                 cvc: fields['cvc'].el.value,
                 zip: fields['zip'].el.value
             };

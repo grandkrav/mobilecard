@@ -50,6 +50,8 @@
         <!-- tests -->
         <script src="../dist/js/libs/requirejs/require.js"></script>
         <script>
+            var card;
+
             require.config({
               urlArgs: "bust=" + (new Date()).getTime(),
               baseUrl: '../dist/js',
@@ -60,6 +62,7 @@
             });
 
             require(['mobilecard'], function(mobilecard) {
+              card = mobilecard;
               mobilecard.init(document.getElementById('payments'), function (err) {
                 console.log(err);
               });
