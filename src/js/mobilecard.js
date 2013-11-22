@@ -43,7 +43,7 @@ var keyUp = function (evt, type) {
   
   // before
   if (field.before) {
-    field.before(field.el.value);
+    field.before(field);
   }
   // onKey validation
   if (field.validateOnInput && field.validation.onKey) {
@@ -64,6 +64,10 @@ var keyUp = function (evt, type) {
 
   // lastSel should be equal to the last char entered
   field.lastSel = field.el.value.length;
+
+  if (field.after) {
+    field.after(field);
+  }
 
   // Validate all fields
   validateFields();
@@ -118,12 +122,20 @@ var addFields = function () {
   fields.add('num', {
     name: 'card_number',
     validateOnInput: true,
-    before: setCard,
+    before: function (field) {
+      setCard(field.el.value);
+    },
     next: function (field) {
       // Delay to fix transition lag
       setTimeout(function () {
         ui.hideNum(field);
       }, 60);
+    },
+    after: function (field) {
+      if (field.lastSel === 0) {
+        field.validation.onKey = false;
+        ui.displayFieldStatus(field, true);
+      }
     },
     test: validate.card
   });

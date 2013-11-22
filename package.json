@@ -1,6 +1,6 @@
 {
   "name": "mobilecard",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Mobile web credit card ui (html, css, js)",
   "author": "Jarid Margolin <jarid@firstopinion.co>",
   "repository": {

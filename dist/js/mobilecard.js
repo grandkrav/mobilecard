@@ -259,7 +259,7 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
         var keyUp = function (evt, type) {
             var field = fields[type], sel = evt.target.selectionEnd, k = evt.which || evt.keyCode;
             if (field.before) {
-                field.before(field.el.value);
+                field.before(field);
             }
             if (field.validateOnInput && field.validation.onKey) {
                 field.validateField();
@@ -275,6 +275,9 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
                 }
             }
             field.lastSel = field.el.value.length;
+            if (field.after) {
+                field.after(field);
+            }
             validateFields();
         };
         var fields = {
@@ -300,11 +303,19 @@ var mobilecard = function (ui, cards, Field, validate, utils) {
             fields.add('num', {
                 name: 'card_number',
                 validateOnInput: true,
-                before: setCard,
+                before: function (field) {
+                    setCard(field.el.value);
+                },
                 next: function (field) {
                     setTimeout(function () {
                         ui.hideNum(field);
                     }, 60);
+                },
+                after: function (field) {
+                    if (field.lastSel === 0) {
+                        field.validation.onKey = false;
+                        ui.displayFieldStatus(field, true);
+                    }
                 },
                 test: validate.card
             });
