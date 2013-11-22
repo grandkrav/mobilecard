@@ -28,10 +28,10 @@ var ui = function ($, Formatter) {
         var updateNum = function (field, type) {
             if (field.formatter) {
                 field.formatter.resetPattern(type.format);
-                field.el.setAttribute('maxLength', type.lengths.num);
             } else {
                 field.formatter = new Formatter(field.el, { pattern: type.format });
             }
+            field.el.setAttribute('maxLength', type.lengths.num);
         };
         var updateCvc = function (field, type) {
             field.el.setAttribute('maxLength', type.lengths.cvc);

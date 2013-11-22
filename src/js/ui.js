@@ -58,12 +58,13 @@ var addExpFormatter = function (field) {
 var updateNum = function (field, type) {
   if (field.formatter) {
     field.formatter.resetPattern(type.format);
-    field.el.setAttribute('maxLength', type.lengths.num);
   } else {
     field.formatter = new Formatter(field.el, {
       pattern: type.format
     });
   }
+  // Maxlength
+  field.el.setAttribute('maxLength', type.lengths.num);
 };
 
 //
