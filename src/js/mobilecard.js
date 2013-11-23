@@ -15,7 +15,7 @@ define([
 
 
 // Scope vars
-var form, evtCallback, card;
+var form, events, card;
 
 //
 // Focus 
@@ -50,7 +50,10 @@ var keyUp = function (evt, type) {
   var field = fields[type],
       sel   = evt.target.selectionEnd,
       k     = evt.which || evt.keyCode;
-  
+
+  // Validate all fields
+  validateFields();
+
   // before
   if (field.before) { field.before(field); }
 
@@ -76,9 +79,6 @@ var keyUp = function (evt, type) {
 
   // after
   if (field.after) { field.after(field); }
-
-  // Validate all fields
-  validateFields();
 };
 
 //
@@ -161,6 +161,7 @@ var addFields = function () {
     },
     next: null,
     focus: function (field) {
+      if (!ui.isEnteringNumber()) { return ui.hideNum(field); }
       setTimeout(function () {
         ui.hideNum(field);
       }, 60);
@@ -210,10 +211,10 @@ var validateFields = function () {
   var error = false;
   for (var key in fields) {
     if (fields[key] instanceof Field && !fields[key].validate()) {
-      return evtCallback(true);
+      return events.validate(true);
     }
   }
-  evtCallback(null);
+  events.validate(null);
 };
 
 //
@@ -235,6 +236,7 @@ var setCard = function (val) {
     card = newCard;
     ui.updateNum(fields.num, card);
     ui.updateCvc(fields.cvc, card);
+    events.card(card.type);
   }
 };
 
@@ -253,10 +255,10 @@ var data = function () {
 //
 // Init module: call after documnent is ready
 //
-var init = function (formEl, next) {
+var init = function (formEl, evts) {
   // Save passed params
   form = formEl;
-  evtCallback = next;
+  events = evts;
 
   // Init ui
   ui.init();

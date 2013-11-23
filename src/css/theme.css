@@ -32,7 +32,7 @@
 	transition: background-position 0.3s ease;
 }
 .mobilecard.formatting > li.input-number {
-	transition: -webkit-transform 0.3s ease 0.15s;
+	transition: -webkit-transform 0.15s ease;
 }
 .mobilecard.formatting.entering-number {
 	transition: none;

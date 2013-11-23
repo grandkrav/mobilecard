@@ -62,12 +62,12 @@
 
 /* ANIMATION SHOW FIELDS */
 .mobilecard.formatting > li.input-number > input {
-	transition: -webkit-transform 0.3s ease 0.15s;
+	transition: -webkit-transform 0.15s ease;
 }
 .mobilecard.formatting > li.input-exp,
 .mobilecard.formatting > li.input-cvc,
 .mobilecard.formatting > li.input-zip {
-	transition: opacity 0.3s ease;
+	transition: opacity 0.15s ease 0.15s;
 }
 
 /* ANIMATION HIDE FIELDS */

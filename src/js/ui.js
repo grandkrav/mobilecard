@@ -15,6 +15,13 @@ define([
 var $mobilecard, $num;
 
 //
+// Return true/false if ui indicates user is entering a number
+//
+var isEnteringNumber = function (field) {
+  return $mobilecard.hasClass('entering-number');
+};
+
+//
 // Get maxLength of object is set
 //
 var getMaxLength = function (field) {
@@ -54,7 +61,6 @@ var displayFieldStatus = function (field, isValid) {
 // Increment all tab indexes for round robin experience
 //
 var setReadOnly = function (field, isValid) {
-  console.log(isValid);
   return isValid
     ? field.el.removeAttribute('readonly')
     : field.el.setAttribute('readonly');
@@ -168,6 +174,7 @@ var init = function () {
 // Expose
 return {
   displayFieldStatus: displayFieldStatus,
+  isEnteringNumber: isEnteringNumber,
   addFocusListener: addFocusListener,
   addKeyUpListener: addKeyUpListener,
   addExpFormatter: addExpFormatter,

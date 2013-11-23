@@ -63,8 +63,13 @@
 
             require(['mobilecard'], function(mobilecard) {
               card = mobilecard;
-              mobilecard.init(document.getElementById('payments'), function (err) {
+              mobilecard.init(document.getElementById('payments'), {
+                validate: function (err) {
                 // console.log(err);
+                },
+                card: function (type) {
+                  console.log(type);
+                }
               });
             });
         </script>
