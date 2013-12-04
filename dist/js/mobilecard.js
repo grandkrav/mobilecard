@@ -202,7 +202,7 @@ var field = function (utils) {
         };
         return Field;
     }(utils);
-var validate = function () {
+var validate = function (cards) {
         var card = function (str) {
             var val = str.replace(/[ -]+/g, ''), len = val.length, mul = 0, sum = 0, prodArr = [
                     [
@@ -234,7 +234,7 @@ var validate = function () {
                 sum += prodArr[mul][parseInt(val.charAt(len), 10)];
                 mul ^= 1;
             }
-            return sum % 10 === 0 && sum > 0;
+            return sum % 10 === 0 && sum > 0 && cards.matchPattern(str).type !== 'default';
         };
         var exp = function (date) {
             var curDate = new Date(), curMonth = curDate.getMonth() + 1, curYear = curDate.getFullYear();
@@ -257,7 +257,7 @@ var validate = function () {
             exp: exp,
             exactLength: exactLength
         };
-    }();
+    }(cards);
 var mobilecard = function (ui, cards, Field, validate, utils) {
         var form, events, card;
         var focus = function (evt, type) {

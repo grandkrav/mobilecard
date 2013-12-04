@@ -26,6 +26,9 @@ var testCard = function () {
   it('Should return false if fails luhn check', function () {
     assert.isFalse(validate.card('4242424242424244'));
   });
+  it('Should return false if card is not a recognized pattern', function () {
+    assert.isFalse(validate.card('3232323232325555'));
+  });
   it('Should handle spaces between chars', function () {
     assert.isTrue(validate.card('4242 4242 4242 4242'));
   });

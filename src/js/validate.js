@@ -5,7 +5,9 @@
  *
  */
 
-define(function () {
+define([
+  'cards'
+], function (cards) {
 
 
 //
@@ -27,7 +29,7 @@ var card = function (str) {
     mul ^= 1;
   }
 
-  return sum % 10 === 0 && sum > 0;
+  return (sum % 10 === 0 && sum > 0) && cards.matchPattern(str).type !== 'default';
 };
 
 //
